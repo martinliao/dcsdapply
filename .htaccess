@@ -1,0 +1,26 @@
+RewriteEngine on
+
+#RewriteCond %{TIME_YEAR}%{TIME_MON}%{TIME_DAY}%{TIME_HOUR}%{TIME_MIN} >201812022359
+#RewriteCond %{TIME_YEAR}%{TIME_MON}%{TIME_DAY}%{TIME_HOUR}%{TIME_MIN} <201812031200
+RewriteCond %{ENV:REDIRECT_X_IS_MAINT} !^1$
+#RewriteCond %{REMOTE_ADDR} !^61.216.24.[95-96]
+#RewriteCond %{REMOTE_ADDR} !^211.79.136.[202-206]
+RewriteRule .* ../maintain.html [E=X_IS_MAINT:1,L]
+
+#Server Zend Mulai ---------------------
+#DirectoryIndex index.php
+#RewriteEngine on
+#RewriteBase /
+#RewriteCond %{REQUEST_FILENAME} !-f
+#RewriteCond %{REQUEST_FILENAME} !-d
+#RewriteCond $1 !^(index\.php|robots\.txt)
+#RewriteRule ^(.*)$ index.php?/$1 [L]
+#Server Zend Selesai ---------------------
+
+#Server Biasa Mulai ---------------------
+RewriteEngine on
+RewriteCond $1 !^(index\.php|robots\.txt)
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^(.*)$ index.php?/$1 [L]
+#Server Biasa Selesai ---------------------
