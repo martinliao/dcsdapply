@@ -144,6 +144,12 @@
               </a>
             </li>
 
+            <li class="<?php echo $active=='outside_signin'?'active':null ?>">
+              <a href="<?php echo base_url('outside_signin');?>">
+                <span>F.處外班刷到</span>
+              </a>
+            </li>
+
             <li class="<?php echo $active=='user_profile'?'active':null ?>">
               <a href="<?php echo base_url('user_profile');?>">
                 <span>G.個人資料</span>

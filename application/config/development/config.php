@@ -31,4 +31,5 @@ $config['base_url'] = $httpRoot;
 
 
 $config['enable_hooks'] = FALSE;
-$config['eda_apply_testrun_id'] = 18;
+$config['eda_apply_testrun_id'] = 18; // 107
+$config['eda_apply_testrun_date'] = '2023-05-31';

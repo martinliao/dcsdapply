@@ -637,4 +637,22 @@ class Calendar_model extends MY_Model
 
         return $return;
     }
+
+    public function getSelfOutside($userID, $queryDate)
+    {
+        $this->db->select('vca.userID, vca.start_time, vca.end_time, vca.hours, c.name, c.sname')
+            ->from('volunteer_calendar_apply vca')
+            ->join('volunteer_calendar vc', 'vc.id=vca.calendarID')
+            ->join('volunteer_classroom vc2', 'vc.vcID = vc2.id')
+            ->join('classroom c', 'vc2.classroomID = c.id')
+            ->where('vc.date', $queryDate)
+            ->where('c.belongto', '68001')
+            ->where('vca.userID', $userID);
+        $query = $this->db->get(); 
+        if ($query) 
+        {
+            return $query->result_array();
+        }
+        return [];
+    }
 }
