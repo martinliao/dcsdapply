@@ -20,8 +20,7 @@ class Volunteer_apply extends CI_Controller
         $userID = $_SESSION['userID'];
         if( strcmp(ENVIRONMENT, 'production') != 0 )
         {
-            //$userID = '107';
-            $userID = $this->load->config->item('eda_apply_testrun_id'); // e.g. 18
+            $userID = $this->config->item('eda_apply_testrun_id'); // e.g. 18, 107
         }
         $user = $this->db->where('id', $userID)
             ->get('users')
