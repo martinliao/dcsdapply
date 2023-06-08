@@ -30,4 +30,5 @@ $httpRoot = rtrim($httpRoot, '/'); /** */
 $config['base_url'] = $httpRoot;
 
 
-$config['enable_hooks'] = TRUE;
+$config['enable_hooks'] = FALSE;
+$config['eda_apply_testrun_id'] = 18;

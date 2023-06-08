@@ -18,7 +18,11 @@ class Volunteer_apply extends CI_Controller
         // $_SESSION['role_id'] = 20 ;
 
         $userID = $_SESSION['userID'];
-        $userID = '18'; //'107';
+        if( strcmp(ENVIRONMENT, 'production') != 0 )
+        {
+            //$userID = '107';
+            $userID = $this->load->config->item('eda_apply_testrun_id'); // e.g. 18
+        }
         $user = $this->db->where('id', $userID)
             ->get('users')
             ->row();
@@ -40,7 +44,6 @@ class Volunteer_apply extends CI_Controller
 
     public function index($date = null)
     {
-
         //     $date = time()-86400*date('w')+(date('w')>0?86400:-6*86400); 
         $this->publish($date);
         // $this->_show_list($date);
@@ -108,7 +111,6 @@ class Volunteer_apply extends CI_Controller
             // }
             redirect(base_url('volunteer_apply/publish_detail/' . $default_month_date . '?' . $vID_str));
         }
-//debugBreak();
         // 用GET接參數
         $vID_str = $this->input->get('vID') ? $this->input->get('vID') : array();
         $not_show = $this->input->get('no_outside') ? $this->input->get('no_outside') : 0;
@@ -179,7 +181,6 @@ class Volunteer_apply extends CI_Controller
 
         $start = current($week_list);
         $end = end($week_list);
-//debugBreak();
         $calendar_list = $this->Calendar_model->get_calendar_list($start, $end, $this->user->long_range, $not_show);
         $apply_data = $this->Calendar_model->get_all_apply_data($start, $end);
 
