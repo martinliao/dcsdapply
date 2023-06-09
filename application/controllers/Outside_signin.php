@@ -9,6 +9,7 @@ class Outside_signin extends CI_Controller
     {
         parent::__construct();
         $this->load->helper('form');
+        $this->load->library('session');
         $this->load->database('phy');
         $this->load->model('Calendar_model');
         $this->load->model('Volunteer_select_model');
@@ -43,8 +44,11 @@ class Outside_signin extends CI_Controller
                 $_today
             );
             if($result) {
-                return redirect(base_url('volunteer_apply'));
+                $this->session->set_flashdata('success_msg', '刷到成功.');
+            } else {
+                $this->session->set_flashdata('success_msg', '刷到失敗!');
             }
+            //redirect(base_url('volunteer_apply'));
         }
         $data['hasOutside'] = sizeof($outsideEvent) > 0;
         $this->load->view('volunteer_manage/header', array('active' => 'volunteer_apply'));
