@@ -14,8 +14,8 @@ class Outside_signin extends CI_Controller
         $this->load->model('Calendar_model');
         $this->load->model('Volunteer_select_model');
         // 這邊之後請改抓SESSION
-        session_start();
-        $_SESSION['userID'] = isset($_SESSION['userID']) ? $_SESSION['userID'] : 1;
+        //session_start();
+        //$_SESSION['userID'] = isset($_SESSION['userID']) ? $_SESSION['userID'] : 1;
 
         $this->userID = $_SESSION['userID'];
         if( strcmp(ENVIRONMENT, 'production') != 0 )
@@ -38,15 +38,19 @@ class Outside_signin extends CI_Controller
         $_today =  ( strcmp(ENVIRONMENT, 'production') != 0 ) ? $this->testrunDate : date('Y-m-d', $default_month_date);
         $outsideEvent= $this->Calendar_model->getSelfOutside($this->user->id, $_today);
         if ($_post = $this->input->post()) {
-            $result = $this->Volunteer_select_model->add_card_log_new(
-                $this->user->idNo, 
-                date('H'), date('i'), date('s'),
-                $_today
-            );
-            if($result) {
-                $this->session->set_flashdata('success_msg', '刷到成功.');
+            if ($_post['idNo'] == $this->user->idNo){
+                $result = $this->Volunteer_select_model->add_card_log_new(
+                    $this->user->idNo, 
+                    date('H'), date('i'), date('s'),
+                    $_today
+                );
+                if($result) {
+                    $this->session->set_flashdata('success_msg', '刷到成功.');
+                } else {
+                    $this->session->set_flashdata('error_msg', '刷到失敗!');
+                }
             } else {
-                $this->session->set_flashdata('success_msg', '刷到失敗!');
+                $this->session->set_flashdata('error_msg', '刷到失敗, 身份證號不符！');
             }
             //redirect(base_url('volunteer_apply'));
         }
