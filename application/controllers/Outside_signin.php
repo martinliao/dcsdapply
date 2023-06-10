@@ -55,7 +55,7 @@ class Outside_signin extends CI_Controller
             //redirect(base_url('volunteer_apply'));
         }
         $data['hasOutside'] = sizeof($outsideEvent) > 0;
-        $this->load->view('volunteer_manage/header', array('active' => 'volunteer_apply'));
+        $this->load->view('volunteer_manage/header', array('active' => 'outside_signin'));
         $this->load->view('outside_signin/outside_signin', $data);
         $this->load->view('volunteer_manage/footer');
     }
