@@ -10,7 +10,7 @@ class Instant_message_model extends MY_Model{
 	
 	function get_name($idno)
 	{
-		$sql = sprintf("SELECT b.firstname FROM mdl_fet_pid a join mdl_user b on a.uid = b.id WHERE idno = '%s'",strtoupper($idno));
+		$sql = sprintf("SELECT b.firstname FROM mdl_fet_pid a join mdl_user b on a.uid = b.id WHERE idno = '%s'",addslashes(strtoupper($idno)));
 		$query = $this->db->query($sql);
 		$name = $query->result();
 
@@ -53,10 +53,10 @@ class Instant_message_model extends MY_Model{
 
 		if(!empty($idno)){
 			$uid = $this->get_uid(strtoupper($idno));
-			$where .= sprintf("AND recipient_id = '%s'",$uid[0]->uid);
+			$where .= sprintf("AND recipient_id = '%s'",addslashes($uid[0]->uid));
 		}
 
-		$sql = sprintf("SELECT min(id) prev_id FROM mdl_fet_instant_message WHERE id > '%s' %s",$id,$where);
+		$sql = sprintf("SELECT min(id) prev_id FROM mdl_fet_instant_message WHERE id > '%s' %s",addslashes($id),$where);
 		$query = $this->db->query($sql);
 
 		return $query->result();
@@ -69,10 +69,10 @@ class Instant_message_model extends MY_Model{
 
 		if(!empty($idno)){
 			$uid = $this->get_uid(strtoupper($idno));
-			$where .= sprintf("AND recipient_id = '%s'",$uid[0]->uid);
+			$where .= sprintf("AND recipient_id = '%s'",addslashes($uid[0]->uid));
 		}
 
-		$sql = sprintf("SELECT max(id) next_id FROM mdl_fet_instant_message WHERE id < '%s' %s",$id,$where);
+		$sql = sprintf("SELECT max(id) next_id FROM mdl_fet_instant_message WHERE id < '%s' %s",addslashes($id),$where);
 		$query = $this->db->query($sql);
 
 		return $query->result();
@@ -85,7 +85,7 @@ class Instant_message_model extends MY_Model{
 
 		if(!empty($idno)){
 			$uid = $this->get_uid(strtoupper($idno));
-			$where .= sprintf("AND recipient_id = '%s'",$uid[0]->uid);
+			$where .= sprintf("AND recipient_id = '%s'",addslashes($uid[0]->uid));
 		}
 
 		$sql = sprintf("SELECT max(id) first_id FROM mdl_fet_instant_message WHERE 1=1 %s",$where);
@@ -101,7 +101,7 @@ class Instant_message_model extends MY_Model{
 
 		if(!empty($idno)){
 			$uid = $this->get_uid(strtoupper($idno));
-			$where .= sprintf("AND recipient_id = '%s'",$uid[0]->uid);
+			$where .= sprintf("AND recipient_id = '%s'",addslashes($uid[0]->uid));
 		}
 
 		$sql = sprintf("SELECT min(id) final_id FROM mdl_fet_instant_message WHERE 1=1 %s",$where);
@@ -121,13 +121,21 @@ class Instant_message_model extends MY_Model{
 
 				if($uid[0]->uid > 0){
 					$firstname = $this->get_name($idno_list[$i]);
-					$sql = sprintf("INSERT INTO mdl_fet_instant_message(title,content,sender_id,sender_name,recipient_id,recipient_name,status,send_time) VALUES('%s','%s','','','%s','%s','0',NOW())",$list['title'],htmlspecialchars($list['content']),$uid[0]->uid,$firstname);
+					$sql = sprintf("INSERT INTO mdl_fet_instant_message(title,content,sender_id,sender_name,recipient_id,recipient_name,status,send_time) VALUES('%s','%s','','','%s','%s','0',NOW())",
+						addslashes($list['title']),
+						addslashes(htmlspecialchars($list['content'])),
+						addslashes($uid[0]->uid),
+						addslashes($firstname)
+					);
 					$this->db->query($sql);
 				}
 			}
 			
 		} elseif($list['mode'] == 'all') {
-			$sql = $sql = sprintf("INSERT INTO mdl_fet_instant_message(title,content,sender_id,sender_name,recipient_id,recipient_name,status,send_time) VALUES('%s','%s','','','all','','0',NOW())",$list['title'],htmlspecialchars($list['content']));
+			$sql = $sql = sprintf("INSERT INTO mdl_fet_instant_message(title,content,sender_id,sender_name,recipient_id,recipient_name,status,send_time) VALUES('%s','%s','','','all','','0',NOW())",
+				addslashes($list['title']),
+				addslashes(htmlspecialchars($list['content']))
+			);
 
 			$this->db->query($sql);
 		}
@@ -135,7 +143,7 @@ class Instant_message_model extends MY_Model{
 	}
 
 	function get_uid($idno){
-		$sql = sprintf("SELECT uid FROM mdl_fet_pid WHERE idno = '%s'",strtoupper($idno));
+		$sql = sprintf("SELECT uid FROM mdl_fet_pid WHERE idno = '%s'",addslashes(strtoupper($idno)));
 		$query = $this->db->query($sql);
 		$uid = $query->result();
 

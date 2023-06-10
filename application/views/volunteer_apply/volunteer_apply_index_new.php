@@ -217,11 +217,12 @@ $current_url='https://'.$_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI'];
                 <form id="post_form" method="POST" action="<?php echo base_url('/volunteer_apply/publish_detail/') ?>">
                     <select name="year">
                     <?php 
-                       $y = date('Y')-1911;
+                        $y = date('Y')-1911-2;
                         
-                       for($i=0;$i<5;$i++){
-                         echo '<option values="'.($y+$i).'">'.($y+$i).'</option>';
-                       }
+                        for($i=0;$i<5;$i++){
+                            $selected = (($y+$i) == (date('Y') -1911)) ? 'selected' : '';
+                            echo '<option values="'.($y+$i).'" '.$selected.'>'.($y+$i).'</option>';
+                        }
                     ?>
                     </select>
                     年
@@ -446,44 +447,32 @@ $current_url='https://'.$_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI'];
                                                     else
                                                     {
                                                         if(count($calendar_list[$vc_data->vcID][$date])==2){
-                                                            $button_str = '<div style="width:100%; text-align:center"><button class="'.$applied_class.'" onclick="'.$action.'">'.$action_str.'</button>';
+                                                            if(isset($calendar_list[$vc_data->vcID][$date][1]->first) && $calendar_list[$vc_data->vcID][$date][1]->first=='1'){
+                                                                $button_str = '<br>';
+                                                            } else {
+                                                                $button_str = '<div style="width:100%; text-align:center"><button class="'.$applied_class.'" onclick="'.$action.'">'.$action_str.'</button>';
+                                                            }
 
                                                             $applied_count1= isset($apply_data[$calendar_list[$vc_data->vcID][$date][1]->id])?count($apply_data[$calendar_list[$vc_data->vcID][$date][1]->id]):0;
 
                                                             $applied_count2= isset($apply_data[$calendar_list[$vc_data->vcID][$date][2]->id])?count($apply_data[$calendar_list[$vc_data->vcID][$date][2]->id]):0;
 
-                                                            if(!($calendar_list[$vc_data->vcID][$date][1]->num_got_it+$calendar_list[$vc_data->vcID][$date][1]->num_waiting <= $applied_count1) && !($calendar_list[$vc_data->vcID][$date][2]->num_got_it+$calendar_list[$vc_data->vcID][$date][2]->num_waiting <= $applied_count2) && $calendar_list[$vc_data->vcID][$date][1]->status && $calendar_list[$vc_data->vcID][$date][2]->status && empty($apply_data[$calendar_list[$vc_data->vcID][$date][1]->id][$userID]) && empty($apply_data[$calendar_list[$vc_data->vcID][$date][2]->id][$userID]))
+                                                            if(
+                                                                !($calendar_list[$vc_data->vcID][$date][1]->num_got_it+$calendar_list[$vc_data->vcID][$date][1]->num_waiting <= $applied_count1) 
+                                                                && !($calendar_list[$vc_data->vcID][$date][2]->num_got_it+$calendar_list[$vc_data->vcID][$date][2]->num_waiting <= $applied_count2) 
+                                                                && $calendar_list[$vc_data->vcID][$date][1]->status 
+                                                                && $calendar_list[$vc_data->vcID][$date][2]->status 
+                                                                && empty($apply_data[$calendar_list[$vc_data->vcID][$date][1]->id][$userID]) 
+                                                                && empty($apply_data[$calendar_list[$vc_data->vcID][$date][2]->id][$userID])
+                                                            )
                                                             {
 
-                                                                if($calendar_list[$vc_data->vcID][$date][1]->volunteerID != '1'){
-                                                                    $apply_all_id = $calendar_list[$vc_data->vcID][$date][1]->id.','.$calendar_list[$vc_data->vcID][$date][2]->id;
+                                                                $apply_all_id = $calendar_list[$vc_data->vcID][$date][1]->id.','.$calendar_list[$vc_data->vcID][$date][2]->id;
 
-                                                                    $action_all = 'apply(\''.$apply_all_id.'\''.',\''.$current_url.'\')';
+                                                                $action_all = 'apply(\''.$apply_all_id.'\''.',\''.$current_url.'\')';
 
-                                                                    $button_str .= '<button class="'.$applied_class.'" onclick="'.$action_all.'">全天</button>';
-                                                                } else {
-                                                                    
-
-                                                                        foreach ($calendar_list_check as $calendar_list_key => $calendar_list_value) {
-                                                                                if(isset($calendar_list_value[$calendar_data->date])){
-                                                                                    // print_r($calendar_list_value[$calendar_data->date]);
-                                                                                    // die('123');
-                                                                                    for($xy=1;$xy<=2;$xy++){
-                                                                                        // print_r($calendar_list_value);
-                                                                                        if(isset($calendar_list_value[$calendar_data->date][$xy]) && $calendar_data->courseID == $calendar_list_value[$calendar_data->date][$xy]->courseID && $calendar_data->type != $calendar_list_value[$calendar_data->date][$xy]->type){
-                                                                                            $apply_all_id = $calendar_data->id.','.$calendar_list_value[$calendar_data->date][$xy]->id;
-
-                                                                                            $action_all = 'apply(\''.$apply_all_id.'\''.',\''.$current_url.'\')';
-
-                                                                                            $button_str .= '<button class="'.$applied_class.'" onclick="'.$action_all.'">全天</button>';
-                                                                                        }
-                                                                                    }
-                                                                                }
-                                                                        }
-                                                                   
-                                                                   
-                                                                    
-                                                                }
+                                                                $button_str .= '<button class="'.$applied_class.'" onclick="'.$action_all.'">全天</button>';
+                                                                
                                                             }
 
                                                             $button_str .= '</div>'; 
@@ -514,7 +503,7 @@ $current_url='https://'.$_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI'];
                                                                                 // die('123');
                                                                                 for($xy=1;$xy<=2;$xy++){
                                                                                     // print_r($calendar_list_value);
-                                                                                    if(isset($calendar_list_value[$calendar_data->date][$xy]) && $calendar_data->courseID == $calendar_list_value[$calendar_data->date][$xy]->courseID && $calendar_data->type != $calendar_list_value[$calendar_data->date][$xy]->type){
+                                                                                    if(isset($calendar_list_value[$calendar_data->date][$xy]) && $calendar_data->courseID == $calendar_list_value[$calendar_data->date][$xy]->courseID && $calendar_data->type != $calendar_list_value[$calendar_data->date][$xy]->type && $calendar_list_value[$calendar_data->date][$xy]->status == 1 ){
                                                                                         $apply_all_id = $calendar_data->id.','.$calendar_list_value[$calendar_data->date][$xy]->id;
 
                                                                                         $action_all = 'apply(\''.$apply_all_id.'\''.',\''.$current_url.'\')';
@@ -540,8 +529,9 @@ $current_url='https://'.$_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI'];
                                                         if(isset($calendar_data->apply_start) && $calendar_data->courseID && (date('Y-m-d')< $calendar_data->apply_start || date('Y-m-d')> $calendar_data->apply_end ))
                                                         {
                                                             $can_apply_class = null;
-                                                            $action = 'alert(\'現在不是報名期間!\\n('.$calendar_data->apply_start.'~'.$calendar_data->apply_end.')\')';
-                                                            $button_str = '<div style="width:100%; text-align:center"><button class="'.$applied_class.'" onclick="'.$action.'">'.$action_str.'</button></div>';
+                                                            // $action = 'alert(\'現在不是報名期間!\\n('.$calendar_data->apply_start.'~'.$calendar_data->apply_end.')\')';
+                                                            // $button_str = '<div style="width:100%; text-align:center"><button class="'.$applied_class.'" onclick="'.$action.'">'.$action_str.'</button></div>';
+                                                            $button_str = null;
                                                         }                                                        
                                                     }
 

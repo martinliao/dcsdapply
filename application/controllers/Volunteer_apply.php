@@ -618,4 +618,125 @@ class Volunteer_apply extends CI_Controller
         // 回報
         echo json_encode(array('code' => '100'));
     }
+
+    public function self_evaluation(){
+        $data = array();
+        $data['user_name'] = $this->user->name;
+
+        $setup = $this->Calendar_model->getEvaluationSetup();
+
+        for($i=0;$i<count($setup);$i++){
+            if($setup[$i]['helf'] == '1'){
+                $start_date = ($setup[$i]['year']+1911).'-01-01';
+                $end_date = ($setup[$i]['year']+1911).'-06-30'; 
+            } else if($setup[$i]['helf'] == '2'){
+                $start_date = ($setup[$i]['year']+1911).'-07-01';
+                $end_date = ($setup[$i]['year']+1911).'-12-31'; 
+            }
+
+            if(!empty($start_date) && !empty($end_date)){
+                $setup[$i]['list'] = $this->Calendar_model->getUserApplyVolunteerCategory($this->user->id, $start_date, $end_date, $setup[$i]['category'], $setup[$i]['year'], $setup[$i]['helf']);
+            }
+        }
+
+        $data['info'] = $setup;
+        $data['year'] = date('Y')-1911;
+        $data['url'] = base_url('volunteer_apply/self_evaluation_table/');
+
+        $this->load->view('volunteer_manage/header',array('active'=>'self_evaluation'));
+        $this->load->view('volunteer_apply/self_evaluation',$data);
+        $this->load->view('volunteer_manage/footer');
+    }
+
+    public function self_evaluation_table(){
+        $data = array();
+        $year = $this->uri->segment(3);
+        $helf_year = $this->uri->segment(4);
+        $category = $this->uri->segment(5);
+        
+        $data['category_name'] = $this->Calendar_model->getCategoryName($category);
+        
+        if(empty($data['category_name'])){
+            redirect(base_url('volunteer_apply/self_evaluation/'));
+        }
+
+        if($helf_year == '1'){
+            $data['date_range'] = $year.'年1月1日至'.$year.'年6月30日';
+
+            $start_date = date('Y').'-01-01';
+            $end_date = date('Y').'-06-30'; 
+            $data['total_hours'] = $this->Calendar_model->getTotalHours($this->user->id, $start_date, $end_date, $category);
+        } else if($helf_year == '2'){
+            $data['date_range'] = $year.'年7月1日至'.$year.'年12月31日';
+
+            $start_date = date('Y').'-07-01';
+            $end_date = date('Y').'-12-31'; 
+            $data['total_hours'] = $this->Calendar_model->getTotalHours($this->user->id, $start_date, $end_date, $category);
+        } else {
+            redirect(base_url('volunteer_apply/self_evaluation/'));
+        }
+
+        $grades = $this->Calendar_model->getSelfEvaluation($this->user->id, $year, $helf_year, $category);
+
+        if(!empty($grades) && $grades[0]['status'] == '1'){
+            redirect(base_url('volunteer_apply/self_evaluation/'));
+        }
+
+        $signature = $this->db->where('user_id',$this->user->id)->get('user_signature')->row();
+
+        if ($signature ) {
+            // 有 signature
+            $data['show_signature'] = 'y' ;
+            $data['signature']      = $signature->signature ;
+        } else {
+            // 沒 signature
+            $data['show_signature'] = 'n' ;
+            $data['signature']      = '' ;
+        }
+
+        $data['user_name'] = $this->user->name;
+        $data['year'] = $year;
+        $data['helf'] = $helf_year;
+        $data['category'] = $category;
+        $data['grades'] = $grades;
+        $data['img_url'] = base_url('resource/images/grade.jpg');
+        $data['action'] = base_url('volunteer_apply/self_evaluation_save');
+        
+        $this->load->view('volunteer_manage/header',array('active'=>'self_evaluation_table'));
+        $this->load->view('volunteer_apply/self_evaluation_table',$data);
+        $this->load->view('volunteer_manage/footer');
+    }
+
+    public function self_evaluation_save(){
+        $mode = intval($this->input->post('mode'));
+        $year = intval($this->input->post('year'));
+        $helf = intval($this->input->post('helf'));
+        $category = intval($this->input->post('category'));
+        $top_grade = intval($this->input->post('top_grade'));
+        $bottom_grade = intval($this->input->post('bottom_grade'));
+
+        $check = $this->Calendar_model->check_self_evaluation($year, $helf, $category, $this->user->id);
+
+        if(!$check){
+            $status = $this->Calendar_model->insert_self_evaluation($mode, $year, $helf, $category, $top_grade, $bottom_grade, $this->user->id);
+        } else {
+            $status = $this->Calendar_model->update_self_evaluation($mode, $year, $helf, $category, $top_grade, $bottom_grade, $this->user->id);
+        }
+        
+        if($status){
+            echo '
+                <script>
+                    alert("填寫完成");
+                    location.href="'.base_url('volunteer_apply/self_evaluation').'";
+                </script>
+            ';
+        } else {
+            echo '
+                <script>
+                    alert("填寫失敗");
+                    location.href="'.base_url('volunteer_apply/self_evaluation').'";
+                </script>
+            ';
+        }
+    }
 }

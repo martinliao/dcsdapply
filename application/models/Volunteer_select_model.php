@@ -76,7 +76,7 @@ class Volunteer_select_model extends MY_Model{
 
 	function upd_volunteer_calendar($vid,$num_got_it){
 		$this->db->set('num_got_it', $num_got_it);
-		$this->db->set('num_waiting', ($num_got_it*2));
+		$this->db->set('num_waiting', ($num_got_it*0));
 		$this->db->where('id',$vid);
 		$this->db->update('volunteer_calendar'); 
 
@@ -503,11 +503,11 @@ class Volunteer_select_model extends MY_Model{
 			$start_date = $start_date.' 00:00:00';
 			$end_date = $end_date.' 23:59:59';
 
-			$where .= sprintf(" AND sign_log.sign_time BETWEEN '%s' AND '%s' ",$start_date,$end_date);
+			$where .= sprintf(" AND sign_log.sign_time BETWEEN '%s' AND '%s' ",addslashes($start_date),addslashes($end_date));
 		}
 
 		if(intval($uid) > 0){
-			$where .= sprintf(" AND users.id = '%s' ",trim($uid)); 
+			$where .= sprintf(" AND users.id = '%s' ",addslashes(trim($uid))); 
 		}
 
 		if(!empty($category)){
@@ -519,7 +519,7 @@ class Volunteer_select_model extends MY_Model{
 					$all = true;
 					break;
 				} else {
-					$category_list .= $category[$i].',';
+					$category_list .= addslashes($category[$i]).',';
 				}
 			}
 
@@ -678,7 +678,11 @@ class Volunteer_select_model extends MY_Model{
 						WHERE
 							a.type = '%s'
 						AND a.date = '%s'
-						AND b.volunteerID = '%s'",$type,$date,$vid);
+						AND b.volunteerID = '%s'",
+						addslashes($type),
+						addslashes($date),
+						addslashes($vid)
+					);
 		
 		$query = $this->db->query($sql);
 		
@@ -699,7 +703,7 @@ class Volunteer_select_model extends MY_Model{
 			$this->db->where('date >=',$first_day);
 			$this->db->where('date <=',$last_day);
 			$this->db->set('num_got_it',$num_got_it);
-			$this->db->set('num_waiting',($num_got_it*2));
+			$this->db->set('num_waiting',($num_got_it*0));
 			$this->db->update('volunteer_calendar');
 
 			return true;

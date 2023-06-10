@@ -1,12 +1,20 @@
-
 <style type="text/css">
-#myCanvas {
-    background: #EEE;
-}
+    #canvas {}
+    
+    #canvasDiv {
+        background-color:gray;
+        background-size: cover;
+        background-repeat: no-repeat;
+        background-position: center center;
+    }
+
+    body{
+        /*font-family: DFKai-sb;*/
+        font-size: 18px;
+    }
 </style>
-<div class="row">
-    <div class="col-xs-12">
-        <div class="box">
+
+
             <div class="box-header">
                 <h3 class="box-title">簽名檔案管理</h3>
             </div>
@@ -18,114 +26,208 @@
                 </div>
             <?php endif; ?>
 
+            更新簽名：請在灰色筐內簽名
+            <br>
+            <div id="canvasDiv" ></div>
 
-            <div class="box-body">
-                更新簽名：請在灰色筐內簽名
-                <br>
-                <canvas width="800" height="300" id="myCanvas"></canvas>
+            <div style="padding: 20px 0px;">
+                <button id="btn_submit" class="btn btn-primary">
+                    確認更新簽名檔案
+                </button>
+                <button id="btn_clear" class="btn btn-default">
+                    清除簽名
+                </button>
 
-                <div style="padding: 20px 0px;">
-                    <button id="save_signature" class="btn btn-primary">
-                        確認更新簽名檔案
-                    </button>
-                    <button id="clear_signature" class="btn btn-default">
-                        清除簽名
-                    </button>
-
-                </div>
             </div>
 
-            
 
-        </div>
-    </div>
-</div>
+<script language="javascript">
+    $('#canvasDiv').on('touchmove', function (event) {
+        event.preventDefault();
+    });
+    var canvasDiv = document.getElementById('canvasDiv');
+    var canvas = document.createElement('canvas');
+    var screenwidth = (window.innerWidth > 0) ? window.innerWidth : screen.width;
 
-<script type="text/javascript">
-var mousePressed = false;
-var lastX, lastY;
-var ctx;
- 
-function InitThis() {
-    ctx = document.getElementById('myCanvas').getContext("2d");
- 
-    $('#myCanvas').mousedown(function (e) {
-        mousePressed = true;
-        Draw(e.pageX - $(this).offset().left, e.pageY - $(this).offset().top, false);
-    });
- 
-    $('#myCanvas').mousemove(function (e) {
-        if (mousePressed) {
-            Draw(e.pageX - $(this).offset().left, e.pageY - $(this).offset().top, true);
-        }
-    });
- 
-    $('#myCanvas').mouseup(function (e) {
-        mousePressed = false;
-    });
-        $('#myCanvas').mouseleave(function (e) {
-        mousePressed = false;
-    });
-}
- 
-function Draw(x, y, isDown) {
-    if (isDown) {
-        ctx.beginPath();
-        ctx.strokeStyle = $('#selColor').val();
-        ctx.lineWidth = $('#selWidth').val();
-        ctx.lineJoin = "round";
-        ctx.moveTo(lastX, lastY);
-        ctx.lineTo(x, y);
-        ctx.closePath();
-        ctx.stroke();
+    var canvasWidth = screenwidth;
+    var canvasHeight = 300;
+    document.addEventListener('touchmove', onDocumentTouchMove, false);
+    var point = {};
+    point.notFirst = false;
+    canvas.setAttribute('width', canvasWidth);
+    canvas.setAttribute('height', canvasHeight);
+    canvas.setAttribute('id', 'canvas');
+    canvasDiv.appendChild(canvas);
+    if (typeof G_vmlCanvasManager != 'undefined') {
+        canvas = G_vmlCanvasManager.initElement(canvas);
     }
-    lastX = x; lastY = y;
-}
+    var context = canvas.getContext("2d");
+    var img = new Image();
+    img.src = "Transparent.png";
 
-$('#clear_signature').on('click', function(event) {
-    event.preventDefault();
-    /* Act on the event */
-    // Use the identity matrix while clearing the canvas
-    ctx.setTransform(1, 0, 0, 1, 0, 0);
-    ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
-});
-
-$('#save_signature').on('click', function(event) {
-    event.preventDefault();
-    /* Act on the event */
-    // Generate the image data
-    var pic = document.getElementById("myCanvas").toDataURL("image/png");
-
-    $.ajax({
-        url: '<?php echo base_url();?>volunteer_apply/save_signature',
-        type: 'POST',
-        dataType: 'json',
-        data: { signature : pic },
-    })
-    .done(function(msg) {
-        if (msg.code=='100') {
-            $('#img_signature').attr('src',pic) ;
-            $('#clear_signature').click();
-            alert('更新完成！') ;
-        } else {
-            alert('系統錯誤，請稍後再試！') ;
-        }
-    })
-    .fail(function() {
-        alert('系統錯誤，請稍後再試！') ;
-    })
-    .always(function() {
-        console.log("complete");
+    img.onload = function() {
+        var ptrn = context.createPattern(img, 'repeat');
+        context.fillStyle = ptrn;
+        context.fillRect(0, 0, canvas.width, canvas.height);
+        //context.strokeStyle="#0000FF";
+    }
+    canvas.addEventListener("touchstart", function(e) {
+        //console.log(e);
+        var mouseX = e.touches[0].pageX - this.offsetLeft;
+        var mouseY = e.touches[0].pageY - this.offsetTop;
+        paint = true;
+        addClick(e.touches[0].pageX - this.offsetLeft, e.touches[0].pageY - this.offsetTop);
+        //console.log(e.touches[0].pageX - this.offsetLeft, e.touches[0].pageY - this.offsetTop);
+        redraw();
     });
 
+    canvas.addEventListener("touchend", function(e) {
+        //console.log("touch end");
+        paint = false;
+    });
 
-});
+    canvas.addEventListener("touchmove", function(e) {
+        if (paint) {
+            //console.log("touchmove");
+            addClick(e.touches[0].pageX - this.offsetLeft, e.touches[0].pageY - this.offsetTop, true);
+            //console.log(e.touches[0].pageX - this.offsetLeft, e.touches[0].pageY - this.offsetTop);
+            redraw();
+        }
 
-$(function() {
-    InitThis() ;
-});  
+    });
+
+    canvas.addEventListener("mousedown", function(e) {
+        var mouseX = e.pageX - this.offsetLeft;
+        var mouseY = e.pageY - this.offsetTop;
+        paint = true;
+        addClick(e.pageX - this.offsetLeft, e.pageY - this.offsetTop);
+        redraw();
+    });
+    canvas.addEventListener("mousemove", function(e) {
+        if (paint) {
+            addClick(e.pageX - this.offsetLeft, e.pageY - this.offsetTop, true);
+            redraw();
+        }
+    });
+    canvas.addEventListener("mouseup", function(e) {
+        paint = false;
+    });
+    canvas.addEventListener("mouseleave", function(e) {
+        paint = false;
+    });
+    document.getElementById("btn_clear").addEventListener("click", function() {
+        canvas.width = canvas.width;
+    });
+
+    $('#btn_submit').on('click', function(event) {
+        event.preventDefault();
+        /* Act on the event */
+        // Generate the image data
+        var pic = canvas.toDataURL("image/png");
+
+        $.ajax({
+            url: '<?php echo base_url();?>volunteer_apply/save_signature',
+            type: 'POST',
+            dataType: 'json',
+            data: { signature : pic },
+        })
+        .done(function(msg) {
+            if (msg.code=='100') {
+                $('#img_signature').attr('src',pic) ;
+                $('#clear_signature').click();
+                alert('更新完成！') ;
+            } else {
+                alert('系統錯誤，請稍後再試！') ;
+            }
+        })
+        .fail(function() {
+            alert('系統錯誤，請稍後再試！') ;
+        })
+        .always(function() {
+            console.log("complete");
+        });
+
+
+    });
+
+    function onDocumentTouchStart(event) {
+        if (event.touches.length == 1) {
+            event.preventDefault();
+            // Faking double click for touch devices
+            var now = new Date().getTime();
+            if (now - timeOfLastTouch < 250) {
+                reset();
+                return;
+            }
+            timeOfLastTouch = now;
+            mouseX = event.touches[0].pageX;
+            mouseY = event.touches[0].pageY;
+            isMouseDown = true;
+
+        }
+
+    }
+
+    function onDocumentTouchMove(event) {
+
+        if (event.touches.length == 1) {
+            
+            mouseX = event.touches[0].pageX;
+            mouseY = event.touches[0].pageY;
+        }
+    }
+
+    function onDocumentTouchEnd(event) {
+        if (event.touches.length == 0) {
+            event.preventDefault();
+            isMouseDown = false;
+        }
+    }
+
+    var clickX = new Array();
+    var clickY = new Array();
+    var clickDrag = new Array();
+    var paint;
+
+    function addClick(x, y, dragging) {
+        clickX.push(x);
+        clickY.push(y);
+        clickDrag.push(dragging);
+    }
+
+    function redraw() {
+
+        //canvas.width = canvas.width; // Clears the canvas
+        //context.strokeStyle = "#df4b26";
+        context.strokeStyle = "#0000ff";
+        context.lineJoin = "round";
+        context.lineWidth = 2;
+        while (clickX.length > 0) {
+            point.bx = point.x;
+            point.by = point.y;
+            point.x = clickX.pop();
+            point.y = clickY.pop();
+            point.drag = clickDrag.pop();
+            context.beginPath();
+            if (point.drag && point.notFirst) {
+                context.moveTo(point.bx, point.by);
+            } else {
+                point.notFirst = true;
+                context.moveTo(point.x - 1, point.y);
+            }
+            context.lineTo(point.x, point.y);
+            context.closePath();
+            context.stroke();
+        }
+    }
+
+    function isCanvasBlank(canvas) {
+        return !canvas.getContext('2d')
+        .getImageData(0, 0, canvas.width, canvas.height).data
+        .some(channel => channel !== 0);
+    }
+
 </script>
-
 
 <style type="text/css">
 .show-msg {
@@ -208,7 +310,3 @@ $(function() {
         </div>
     </div>
 </div>
-
-
-
-

@@ -144,6 +144,11 @@
               </a>
             </li>
 
+            <li class="<?php echo $active=='self_evaluation'?'active':null ?>">
+              <a href="<?php echo base_url('volunteer_apply/self_evaluation/');?>">
+                <span>E.自評專區</span>
+              </a>
+            </li>
             <li class="<?php echo $active=='outside_signin'?'active':null ?>">
               <a href="<?php echo base_url('outside_signin');?>">
                 <span>F.處外班刷到</span>
@@ -155,7 +160,6 @@
                 <span>G.個人資料</span>
               </a>
             </li>
-
           </ul>
         </section>
         <!-- /.sidebar -->

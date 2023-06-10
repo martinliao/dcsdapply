@@ -68,35 +68,122 @@ class Course_model extends MY_Model{
 				AND h.itemmodule = 'quiz'
 				where t.id = %s
 				GROUP BY
-					t.id",$id);
+					t.id",addslashes($id));
 
 		$query = $this->db->query($sql);
 		return $query->result();
 	}
 
 	function get_course_manage($id){
-		$sql = sprintf("select * from mdl_fet_course_manage where cid = '%s'",$id);
+		$sql = sprintf("select * from mdl_fet_course_manage where cid = '%s'",addslashes($id));
 		$query = $this->db->query($sql);
 		return $query->result();
 
 	}
 
 	function edit_course_info($list){
-		$sql = sprintf("select count(1) cnt from mdl_fet_course_manage where cid = '%s'",$list['cid']);
+		$sql = sprintf("select count(1) cnt from mdl_fet_course_manage where cid = '%s'",addslashes($list['cid']));
 		$query = $this->db->query($sql);
 		$cnt =  $query->result();
 		if($cnt[0]->cnt > 0){
-			$sql = sprintf("update mdl_fet_course_manage set course_status= '%s', is_mobile= '%s', is_quiz= '%s', contractor_remark= '%s', browser= '%s', off_date= '%s',	on_date= '%s', teaching_materials_year= '%s', course_output_year= '%s',	course_length= '%s', priority_policy= '%s',	teaching_1= '%s', teaching_2= '%s',	teaching_3= '%s', teaching_4= '%s',	teaching_5= '%s', teaching_6= '%s',	teaching_7= '%s', teaching_8= '%s',	teaching_9= '%s', teaching_10= '%s',	teaching_11= '%s', teaching_12= '%s', teaching_13= '%s', teaching_14= '%s',	teaching_15= '%s',	teaching_16= '%s',	class_name_104= '%s', edu_courseid= '%s', artificial_check_status= '%s', deformity_teaching_id = '%s',guest_allow = '%s' where cid ='%s'",$list['course_status_now'],$list['mobile_allow'],$list['quiz'],$list['contractor_remark'],$list['browser'],$list['off_date'],$list['on_date'],$list['teaching_materials_year'],$list['course_output_year'],$list['course_length'],$list['priority_policy'],$list['teaching_1'],$list['teaching_2'],$list['teaching_3'],$list['teaching_4'],$list['teaching_5'],$list['teaching_6'],$list['teaching_7'],$list['teaching_8'],$list['teaching_9'],$list['teaching_10'],$list['teaching_11'],$list['teaching_12'],$list['teaching_13'],$list['teaching_14'],$list['teaching_15'],$list['teaching_16'],$list['class_name'],$list['edu_courseid'],$list['artificial_check_error'],$list['deformity_teaching_id'],$list['guest_allow'],$list['cid']);
+			$sql = sprintf("update mdl_fet_course_manage set course_status= '%s', is_mobile= '%s', is_quiz= '%s', contractor_remark= '%s', browser= '%s', off_date= '%s',	on_date= '%s', teaching_materials_year= '%s', course_output_year= '%s',	course_length= '%s', priority_policy= '%s',	teaching_1= '%s', teaching_2= '%s',	teaching_3= '%s', teaching_4= '%s',	teaching_5= '%s', teaching_6= '%s',	teaching_7= '%s', teaching_8= '%s',	teaching_9= '%s', teaching_10= '%s',	teaching_11= '%s', teaching_12= '%s', teaching_13= '%s', teaching_14= '%s',	teaching_15= '%s',	teaching_16= '%s',	class_name_104= '%s', edu_courseid= '%s', artificial_check_status= '%s', deformity_teaching_id = '%s',guest_allow = '%s' where cid ='%s'",
+				addslashes($list['course_status_now']),
+				addslashes($list['mobile_allow']),
+				addslashes($list['quiz']),
+				addslashes($list['contractor_remark']),
+				addslashes($list['browser']),
+				addslashes($list['off_date']),
+				addslashes($list['on_date']),
+				addslashes($list['teaching_materials_year']),
+				addslashes($list['course_output_year']),
+				addslashes($list['course_length']),
+				addslashes($list['priority_policy']),
+				addslashes($list['teaching_1']),
+				addslashes($list['teaching_2']),
+				addslashes($list['teaching_3']),
+				addslashes($list['teaching_4']),
+				addslashes($list['teaching_5']),
+				addslashes($list['teaching_6']),
+				addslashes($list['teaching_7']),
+				addslashes($list['teaching_8']),
+				addslashes($list['teaching_9']),
+				addslashes($list['teaching_10']),
+				addslashes($list['teaching_11']),
+				addslashes($list['teaching_12']),
+				addslashes($list['teaching_13']),
+				addslashes($list['teaching_14']),
+				addslashes($list['teaching_15']),
+				addslashes($list['teaching_16']),
+				addslashes($list['class_name']),
+				addslashes($list['edu_courseid']),
+				addslashes($list['artificial_check_error']),
+				addslashes($list['deformity_teaching_id']),
+				addslashes($list['guest_allow']),
+				addslashes($list['cid'])
+			);
 			$query = $this->db->query($sql);
 		} else {
-			$sql = sprintf("insert into mdl_fet_course_manage(cid,course_status,is_mobile,is_quiz,contractor_remark,browser,off_date,on_date,teaching_materials_year,course_output_year,course_length,priority_policy,teaching_1,teaching_2,teaching_3,teaching_4,teaching_5,teaching_6,teaching_7,teaching_8,teaching_9,teaching_10,teaching_11,teaching_12,teaching_13,teaching_14,teaching_15,teaching_16,class_name_104,edu_courseid,artificial_check_status,deformity_teaching_id,guest_allow) values('%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s')",$list['cid'],$list['course_status_now'],$list['mobile_allow'],$list['quiz'],$list['contractor_remark'],$list['browser'],$list['off_date'],$list['on_date'],$list['teaching_materials_year'],$list['course_output_year'],$list['course_length'],$list['priority_policy'],$list['teaching_1'],$list['teaching_2'],$list['teaching_3'],$list['teaching_4'],$list['teaching_5'],$list['teaching_6'],$list['teaching_7'],$list['teaching_8'],$list['teaching_9'],$list['teaching_10'],$list['teaching_11'],$list['teaching_12'],$list['teaching_13'],$list['teaching_14'],$list['teaching_15'],$list['teaching_16'],$list['class_name'],$list['edu_courseid'],$list['artificial_check_error'],$list['deformity_teaching_id'],$list['guest_allow']);
+			$sql = sprintf("insert into mdl_fet_course_manage(cid,course_status,is_mobile,is_quiz,contractor_remark,browser,off_date,on_date,teaching_materials_year,course_output_year,course_length,priority_policy,teaching_1,teaching_2,teaching_3,teaching_4,teaching_5,teaching_6,teaching_7,teaching_8,teaching_9,teaching_10,teaching_11,teaching_12,teaching_13,teaching_14,teaching_15,teaching_16,class_name_104,edu_courseid,artificial_check_status,deformity_teaching_id,guest_allow) values('%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s')",
+				addslashes($list['cid']),
+				addslashes($list['course_status_now']),
+				addslashes($list['mobile_allow']),
+				addslashes($list['quiz']),
+				addslashes($list['contractor_remark']),
+				addslashes($list['browser']),
+				addslashes($list['off_date']),
+				addslashes($list['on_date']),
+				addslashes($list['teaching_materials_year']),
+				addslashes($list['course_output_year']),
+				addslashes($list['course_length']),
+				addslashes($list['priority_policy']),
+				addslashes($list['teaching_1']),
+				addslashes($list['teaching_2']),
+				addslashes($list['teaching_3']),
+				addslashes($list['teaching_4']),
+				addslashes($list['teaching_5']),
+				addslashes($list['teaching_6']),
+				addslashes($list['teaching_7']),
+				addslashes($list['teaching_8']),
+				addslashes($list['teaching_9']),
+				addslashes($list['teaching_10']),
+				addslashes($list['teaching_11']),
+				addslashes($list['teaching_12']),
+				addslashes($list['teaching_13']),
+				addslashes($list['teaching_14']),
+				addslashes($list['teaching_15']),
+				addslashes($list['teaching_16']),
+				addslashes($list['class_name']),
+				addslashes($list['edu_courseid']),
+				addslashes($list['artificial_check_error']),
+				addslashes($list['deformity_teaching_id']),
+				addslashes($list['guest_allow'])
+			);
 			$query = $this->db->query($sql);
 		}
 
-		$sql = sprintf("update mdl_fet_course_info_test set course_target = '%s', course_info = '%s', course_introduce = '%s', course_outline = '%s', course_outher = '%s', course_teacher = '%s', course_remark = '%s' where courseid = '%s'",htmlspecialchars($list['course_target']),htmlspecialchars($list['course_info']),htmlspecialchars($list['course_intro']),htmlspecialchars($list['course_outline']),htmlspecialchars($list['course_other']),htmlspecialchars($list['teacher']),htmlspecialchars($list['course_remark']),$list['cid']);
+		$sql = sprintf("update mdl_fet_course_info_test set course_target = '%s', course_info = '%s', course_introduce = '%s', course_outline = '%s', course_outher = '%s', course_teacher = '%s', course_remark = '%s' where courseid = '%s'",
+			addslashes(htmlspecialchars($list['course_target'])),
+			addslashes(htmlspecialchars($list['course_info'])),
+			addslashes(htmlspecialchars($list['course_intro'])),
+			addslashes(htmlspecialchars($list['course_outline'])),
+			addslashes(htmlspecialchars($list['course_other'])),
+			addslashes(htmlspecialchars($list['teacher'])),
+			addslashes(htmlspecialchars($list['course_remark'])),
+			addslashes($list['cid'])
+		);
 		$query = $this->db->query($sql);
 
-		$sql = sprintf("update mdl_fet_course_data_test set keyword = '%s', edu_typeid = '%s', edu_detailtypeid = '%s', edu_typesubid = '%s', edu_studydetailid = '%s', env_funid = '%s', env_typeid = '%s', ecpa_typeid = '%s' where courseid = '%s' ",$list['keyword'],$list['edu_typeid'],$list['edu_detailtypeid'],$list['edu_typesubid'],$list['edu_typesubid'],$list['edu_studydetailid'],$list['env_funid'],$list['env_typeid'],$list['cid']);
+		$sql = sprintf("update mdl_fet_course_data_test set keyword = '%s', edu_typeid = '%s', edu_detailtypeid = '%s', edu_typesubid = '%s', edu_studydetailid = '%s', env_funid = '%s', env_typeid = '%s', ecpa_typeid = '%s' where courseid = '%s' ",
+			addslashes($list['keyword']),
+			addslashes($list['edu_typeid']),
+			addslashes($list['edu_detailtypeid']),
+			addslashes($list['edu_typesubid']),
+			addslashes($list['edu_typesubid']),
+			addslashes($list['edu_studydetailid']),
+			addslashes($list['env_funid']),
+			addslashes($list['env_typeid']),
+			addslashes($list['cid'])
+		);
 		$query = $this->db->query($sql);
 
 
