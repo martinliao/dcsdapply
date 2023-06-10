@@ -750,14 +750,14 @@ class Volunteer_apply extends CI_Controller
         $top_grade = intval($this->input->post('top_grade'));
         $bottom_grade = intval($this->input->post('bottom_grade'));
 
-        $selfcommment = intval($this->input->post('selfcommment')); // limit 100
+        $selfcomment = $this->input->post('selfcomment');
 
         $check = $this->Calendar_model->check_self_evaluation($year, $helf, $category, $this->user->id);
-
+        
         if(!$check){
-            $status = $this->Calendar_model->insert_self_evaluation($mode, $year, $helf, $category, $top_grade, $bottom_grade, $this->user->id, $selfcommment);
+            $status = $this->Calendar_model->insert_self_evaluation($mode, $year, $helf, $category, $top_grade, $bottom_grade, $this->user->id, $selfcomment);
         } else {
-            $status = $this->Calendar_model->update_self_evaluation($mode, $year, $helf, $category, $top_grade, $bottom_grade, $this->user->id, $selfcommment);
+            $status = $this->Calendar_model->update_self_evaluation($mode, $year, $helf, $category, $top_grade, $bottom_grade, $this->user->id, $selfcomment);
         }
         
         if($status){

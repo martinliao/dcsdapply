@@ -805,7 +805,7 @@ class Calendar_model extends MY_Model{
         return false;
     }
 
-    public function insert_self_evaluation($mode, $year, $helf, $category, $top_grade, $bottom_grade, $uid, $selfcommment){
+    public function insert_self_evaluation($mode, $year, $helf, $category, $top_grade, $bottom_grade, $uid, $selfcomment){
         $this->db->set('status', $mode);
         $this->db->set('year', $year);
         $this->db->set('helf', $helf);
@@ -815,7 +815,7 @@ class Calendar_model extends MY_Model{
         $this->db->set('uid', $uid);
         $this->db->set('create_time', date('Y-m-d H:i:s'));
         $this->db->set('modify_time', date('Y-m-d H:i:s'));
-        $this->db->set('selfcomment', $selfcommment);
+        $this->db->set('selfcomment', $selfcomment);
 
         if( $this->db->insert('self_evaluation')){
             return true;
@@ -824,12 +824,12 @@ class Calendar_model extends MY_Model{
         return false;
     }
 
-    public function update_self_evaluation($mode, $year, $helf, $category, $top_grade, $bottom_grade, $uid, $selfcommment){
+    public function update_self_evaluation($mode, $year, $helf, $category, $top_grade, $bottom_grade, $uid, $selfcomment){
         $this->db->set('status', $mode);
         $this->db->set('top_grade', $top_grade);
         $this->db->set('bottom_grade', $bottom_grade);
         $this->db->set('modify_time', date('Y-m-d H:i:s'));
-        $this->db->set('selfcomment', $selfcommment);
+        $this->db->set('selfcomment', $selfcomment);
 
         $this->db->where('uid', $uid);
         $this->db->where('year', $year);

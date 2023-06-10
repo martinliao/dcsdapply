@@ -19,7 +19,7 @@ class Migration_Self_Evaluation extends CI_Migration
         $this->get_settings();
         /**************** Start Create Tables ****************/
         $fields = array(
-            'selfcomment' => array('type' => 'VARCHAR', 'constraint' => '100', 'unsigned' => TRUE, 'null' => TRUE, 'after' => 'email')
+            'selfcomment' => array('type' => 'VARCHAR', 'constraint' => '100', 'unsigned' => TRUE, 'null' => TRUE, 'after' => 'bottom_grade')
         );
         $this->dbforge->add_column($this->settings['eval'], $fields);
 
