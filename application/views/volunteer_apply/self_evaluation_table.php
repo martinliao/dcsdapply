@@ -65,6 +65,13 @@
                     <td style="text-align:left;width:45%">10. 恪遵訓練機關服務規範並嚴守服務機密。(10分)</td>
                 </tr>
                 <tr>
+                    <td style="vertical-align:middle;width:5%">3</td>
+                    <td style="vertical-align:middle;width:15%">開放性意見</td>
+                    <td colspan=1><textarea class="form-control" id="open_comment" v-model="text" rows="6" placeholder="字數限制100字">
+                    </textarea>
+                    </td>
+                </tr>
+                <tr>
                     <td colspan="3" style="text-align:left;width:65%">
                     <?=htmlspecialchars($category_name,ENT_HTML5|ENT_QUOTES)?>志工簽名：
                     <?php if( $show_signature=='y' ) : ?>
@@ -146,6 +153,13 @@
                 </tr>
                 <tr>
                     <td style="text-align:left;width:45%">10. 嚴守服務機密。(10分)</td>
+                </tr>
+                <tr>
+                    <td style="vertical-align:middle;width:5%">3</td>
+                    <td style="vertical-align:middle;width:15%">開放性意見</td>
+                    <td colspan=1><textarea class="form-control" id="open_comment" v-model="text" rows="6" placeholder="字數限制100字">
+                    </textarea>
+                    </td>
                 </tr>
                 <tr>
                     <td colspan="3" style="text-align:left;width:65%">
@@ -231,6 +245,13 @@
                     <td style="text-align:left;width:45%">10. 嚴守服務機密。(10分)</td>
                 </tr>
                 <tr>
+                    <td style="vertical-align:middle;width:5%">3</td>
+                    <td style="vertical-align:middle;width:15%">開放性意見</td>
+                    <td colspan=1><textarea class="form-control" id="open_comment" v-model="text" rows="6" placeholder="字數限制100字">
+                    </textarea>
+                    </td>
+                </tr>
+                <tr>
                     <td colspan="3" style="text-align:left;width:65%">
                     <?=htmlspecialchars($category_name,ENT_HTML5|ENT_QUOTES)?>志工簽名：
                     <?php if( $show_signature=='y' ) : ?>
@@ -312,6 +333,13 @@
                 </tr>
                 <tr>
                     <td style="text-align:left;width:45%">10. 嚴守服務機密。(10分)</td>
+                </tr>
+                <tr>
+                    <td style="vertical-align:middle;width:5%">3</td>
+                    <td style="vertical-align:middle;width:15%">開放性意見</td>
+                    <td colspan=1><textarea class="form-control" id="open_comment" v-model="text" rows="6" placeholder="字數限制100字">
+                    </textarea>
+                    </td>
                 </tr>
                 <tr>
                     <td colspan="3" style="text-align:left;width:65%">

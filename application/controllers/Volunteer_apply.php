@@ -26,6 +26,41 @@ class Volunteer_apply extends CI_Controller
             ->get('users')
             ->row();
         $this->user = $user;
+
+        if(!isset($_SESSION['evaluation_alert']) || $_SESSION['evaluation_alert'] != '1'){
+            $setup = $this->Calendar_model->getEvaluationSetup();
+            $message = '';
+            for($i=0;$i<count($setup);$i++){
+                if($setup[$i]['helf'] == '1'){
+                    $start_date = ($setup[$i]['year']+1911).'-01-01';
+                    $end_date = ($setup[$i]['year']+1911).'-06-30'; 
+                } else if($setup[$i]['helf'] == '2'){
+                    $start_date = ($setup[$i]['year']+1911).'-07-01';
+                    $end_date = ($setup[$i]['year']+1911).'-12-31'; 
+                }
+
+                if(!empty($start_date) && !empty($end_date)){
+                    $setup[$i]['list'] = $this->Calendar_model->getUserApplyVolunteerCategory($this->user->id, $start_date, $end_date, $setup[$i]['category'], $setup[$i]['year'], $setup[$i]['helf']);
+                    
+                    if(count($setup[$i]['list']) > 0 && $setup[$i]['list'][0]['status'] != '1'){
+                        if($setup[$i]['helf'] == '1'){
+                            $helf_name = '上半年';
+                        } else if($setup[$i]['helf'] == '2'){
+                            $helf_name = '下半年';
+                        }
+
+                        $message .= htmlspecialchars($setup[$i]['year'],ENT_HTML5|ENT_QUOTES).'年'.$helf_name.htmlspecialchars($setup[$i]['list'][0]['name'],ENT_HTML5|ENT_QUOTES).'\\n';
+                    }
+                }
+            }
+
+            if(!empty($message)){
+                $message = htmlspecialchars($this->user->name,ENT_HTML5|ENT_QUOTES).'您好\\n'.$message.'自評表尚未完成，請到E.自評專區填寫';
+                echo '<script>console.log("'.$message.'");';
+                echo 'alert("'.$message.'");';
+                echo '</script>';
+            }
+        }
     }
 
     public function change_user($userID)
@@ -641,7 +676,7 @@ class Volunteer_apply extends CI_Controller
 
         $data['info'] = $setup;
         $data['year'] = date('Y')-1911;
-        $data['url'] = base_url('volunteer_apply/self_evaluation_table/');
+        $data['url'] = base_url('volunteer_apply/self_evaluation_table');
 
         $this->load->view('volunteer_manage/header',array('active'=>'self_evaluation'));
         $this->load->view('volunteer_apply/self_evaluation',$data);
@@ -715,12 +750,14 @@ class Volunteer_apply extends CI_Controller
         $top_grade = intval($this->input->post('top_grade'));
         $bottom_grade = intval($this->input->post('bottom_grade'));
 
+        $selfcommment = intval($this->input->post('selfcommment')); // limit 100
+
         $check = $this->Calendar_model->check_self_evaluation($year, $helf, $category, $this->user->id);
 
         if(!$check){
-            $status = $this->Calendar_model->insert_self_evaluation($mode, $year, $helf, $category, $top_grade, $bottom_grade, $this->user->id);
+            $status = $this->Calendar_model->insert_self_evaluation($mode, $year, $helf, $category, $top_grade, $bottom_grade, $this->user->id, $selfcommment);
         } else {
-            $status = $this->Calendar_model->update_self_evaluation($mode, $year, $helf, $category, $top_grade, $bottom_grade, $this->user->id);
+            $status = $this->Calendar_model->update_self_evaluation($mode, $year, $helf, $category, $top_grade, $bottom_grade, $this->user->id, $selfcommment);
         }
         
         if($status){
