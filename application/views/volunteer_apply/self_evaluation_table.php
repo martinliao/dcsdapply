@@ -67,7 +67,7 @@
                 <tr>
                     <td style="vertical-align:middle;width:5%">3</td>
                     <td style="vertical-align:middle;width:15%">開放性意見</td>
-                    <td colspan=1><textarea class="form-control" name="selfcomment" v-model="text" rows="6" placeholder="字數限制100字">
+                    <td colspan=1><textarea class="form-control" name="selfcomment" v-model="text" rows="6" placeholder="字數限制100字" maxlength="100">
 <?=isset($grades[0]['selfcomment'])?htmlspecialchars($grades[0]['selfcomment'],ENT_HTML5|ENT_QUOTES):''?></textarea>
                     </td>
                 </tr>
